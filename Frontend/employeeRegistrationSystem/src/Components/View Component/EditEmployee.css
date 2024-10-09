@@ -1,0 +1,79 @@
+.editUserContainer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+    transition: all.2s linear;
+}
+
+.editUserModal {
+    background: #d9d9d9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 600px;
+}
+
+.inputContainer2 {
+    margin-bottom: 15px;
+}
+
+.inputContainer2 label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.inputContainer2 input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    box-sizing: border-box;
+    border: none;
+    outline: none;
+    border-bottom: 2px solid transparent;
+    background: #a7a7a7;
+}
+.inputContainer2 input:focus {
+    border-bottom: 2px solid #47912c;
+}
+
+.formActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.formActions button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.formActions button[type="submit"] {
+    background-color: #47912c;
+    color: #fff;
+}
+
+.formActions button[type="submit"]:hover {
+    background-color: #47912c;
+}
+
+.formActions button[type="button"] {
+    background-color: #ff0000;
+    color: #fff;
+}
+
+.formActions button[type="button"]:hover {
+    background-color: #ff0000;
+}

@@ -1,0 +1,24 @@
+@import url('https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap');
+*{
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "Mulish", sans-serif;
+}
+body{
+  background: #a3a3a3;
+}
+::-webkit-scrollbar{
+  width: 5px;
+}
+::-webkit-scrollbar-thumb{
+  background: rgb(109, 109, 109);
+  border-radius: 5px;
+}
+::selection{
+  background: #585858;
+  color: #ffffff;
+}
+nav{
+  z-index: 9;
+}

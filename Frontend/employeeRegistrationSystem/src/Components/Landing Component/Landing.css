@@ -1,0 +1,132 @@
+.NavBar{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #585858;
+    padding: 10px 5%;
+    position: fixed;
+    width: 100%;
+    z-index: 99;
+}
+.logo{
+    border-radius: 50%;
+    
+}
+.logo img{
+    width: 100px;
+    object-fit: contain;
+}
+.Links{
+    display: flex;
+    gap: 30px;
+}
+.Links li{
+    list-style: none;
+    cursor: pointer;
+}
+.Links li a{
+    text-decoration: none;
+    color: #b8b8b8;
+    transition: all .2s linear;
+    font-size: .9em;
+    height: 100%;
+    text-transform: uppercase;
+    padding: 4px 0;
+}
+.Links li a:hover{
+    color: #cecece;
+}
+.navBtn button{
+    background: #D9d9d9;
+    outline: none;
+    border: none;
+    width: 100px;
+    height: 40px;
+    border-radius: 10px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all .2s linear;
+}
+.navBtn button:hover{
+    background: #9c9c9c;
+    color: #FFF;
+}
+  .NavBar .Links a.active {
+    color:#fff;
+  }
+
+  @media (max-width:854px) {
+    .Links{
+        display: flex;
+        position: fixed;
+        z-index: 9;
+        gap: unset;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin:auto;
+        width: 100%;
+        text-align: center;
+        align-items: center;
+        height: 75px;
+    }
+    .Links li:nth-child(1){
+        
+        z-index: 1;
+        width: 100%;
+        background: #398D2C;
+        text-align: center;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9;
+    }
+    .Links li:nth-child(2){
+        
+        z-index: 1;
+        width: 100%;
+        background: #A08B55;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        
+    }
+    .Links li:nth-child(3){
+        
+        z-index: 1;
+        width: 100%;
+        background: #FF0000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        
+    }
+    .Links li{
+        align-items: center;
+        justify-content: space-between;
+        list-style: none;
+        cursor: pointer;
+    }
+    .Links li a{
+        text-align: center;
+        display: flex;
+        align-items: center;
+        font-size: .7em;
+    }
+    .logo img{
+        width: 90px;
+    }
+    .navBtn button{
+        font-size: .7em;
+        font-weight: 600;
+        width: 90px;
+        height: 50px;
+    }
+    .NavBar .Links a.active {
+        color:#fff;
+        border-bottom: 0px;
+      }
+  }
