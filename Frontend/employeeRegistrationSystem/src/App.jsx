@@ -7,6 +7,7 @@ import SignIn from './Components/AuthComponent/SignIn';
 import AddUser from './Components/Adding Component/AddEmployee';
 import ViewDeletedUsers from './Components/Deleted Users Component/DeletedEmployee';
 import Loader from './Components/Loader/Loader';
+import Admins from './Components/AdminsComponent/Admins';
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -59,6 +60,8 @@ const App = () => {
         return <ViewUser onAddUserClick={() => setActiveComponent('addEmployee')} />;
       case 'viewDeletedEmployees':
         return <ViewDeletedUsers />;
+      case 'admin':
+        return <Admins />;
       default:
         return <ViewUser onAddUserClick={() => setActiveComponent('addEmployee')} />;
     }
