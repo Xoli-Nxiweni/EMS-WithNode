@@ -2,7 +2,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: #585858;
+    background: #708195;
     padding: 10px 5%;
     position: fixed;
     width: 100%;
@@ -24,25 +24,30 @@
     list-style: none;
     cursor: pointer;
 }
+.Links li svg{
+    font-size: 5em;
+    display: none;
+}
 .Links li a{
     text-decoration: none;
-    color: #b8b8b8;
+    color: #c8c8c8;
     transition: all .2s linear;
     font-size: .9em;
     height: 100%;
+    font-weight: 700;
     text-transform: uppercase;
     padding: 4px 0;
 }
 .Links li a:hover{
-    color: #cecece;
+    color: #ffffff;
 }
 .navBtn button{
-    background: #D9d9d9;
+    /* background: #D9d9d9; */
     outline: none;
     border: none;
-    width: 100px;
-    height: 40px;
-    border-radius: 10px;
+    /* width: 100px; */
+    /* height: 40px; */
+    border-radius: 50%;
     cursor: pointer;
     text-transform: uppercase;
     transition: all .2s linear;
@@ -52,7 +57,7 @@
     color: #FFF;
 }
   .NavBar .Links a.active {
-    color:#fff;
+    color:hsl(0, 0%, 100%);
   }
 
   @media (max-width:854px) {
@@ -70,11 +75,27 @@
         align-items: center;
         height: 75px;
     }
+    .Links li svg{
+        font-size: 5em;
+        display: block;
+        color: #c8c8c8;
+        border: 1px solid;
+        padding: 10px;
+        border-radius: 50%;
+        transition: all .2s linear;
+    }
+    .Links li svg:hover{
+        transform: translateY(-5px);
+        background: #6d94bf;
+    }
+    .Links li h3{
+        display: none;
+    }
     .Links li:nth-child(1){
         
         z-index: 1;
         width: 100%;
-        background: #398D2C;
+        background: #708195;
         text-align: center;
         height: 100%;
         display: flex;
@@ -86,7 +107,7 @@
         
         z-index: 1;
         width: 100%;
-        background: #A08B55;
+        background: #708195;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -97,7 +118,7 @@
         
         z-index: 1;
         width: 100%;
-        background: #FF0000;
+        background: #708195;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -107,7 +128,7 @@
     .Links li:nth-child(4){
         z-index: 1;
         width: 100%;
-        background: #0000ff;
+        background: #708195;
         display: flex;
         align-items: center;
         justify-content: center;

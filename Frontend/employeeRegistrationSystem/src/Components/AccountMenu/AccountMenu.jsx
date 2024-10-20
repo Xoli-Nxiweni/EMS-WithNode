@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore'; // Firestore operations
-import { db, auth } from '../../firebase'; // Firebase initialization
+import { doc, getDoc } from 'firebase/firestore';
+import { getAuth, signOut } from 'firebase/auth';
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
 import Menu from '@mui/material/Menu';
@@ -10,26 +10,33 @@ import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import PersonAdd from '@mui/icons-material/PersonAdd';
-import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import Button from '@mui/material/Button';
+import UserProfile from '../UserProfile/UserProfile';
+import { firestore } from '../../firebase';
 
 // eslint-disable-next-line react/prop-types
-const AccountMenu = ({ userId, userRole }) => {
+export default function AccountMenu({ userId, onLogout }) {
   const [userDetails, setUserDetails] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [showProfile, setShowProfile] = useState(false); // Toggle for UserProfile
-  const [editedUser, setEditedUser] = useState({}); // For handling updates
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [isAdminsClicked, setIsAdminsClicked] = useState(false);
   const open = Boolean(anchorEl);
+
+  const auth = getAuth();
 
   // Fetch user details from Firestore
   useEffect(() => {
     const fetchUserDetails = async () => {
       if (userId) {
-        const userRef = doc(db, 'users', userId);
+        const userRef = doc(firestore, 'users', userId);
         const userSnap = await getDoc(userRef);
         if (userSnap.exists()) {
           setUserDetails(userSnap.data());
-          setEditedUser(userSnap.data());
         }
       }
     };
@@ -43,44 +50,29 @@ const AccountMenu = ({ userId, userRole }) => {
 
   const handleClose = () => {
     setAnchorEl(null);
+    setIsAdminsClicked(false); // Close Admins when menu is closed
   };
 
   const handleLogout = () => {
-    auth.signOut()
+    signOut(auth)
       .then(() => {
         console.log('User signed out');
+        if (onLogout) {
+          onLogout(); // Trigger any additional logout actions if provided
+        }
       })
       .catch((error) => {
         console.error('Error logging out:', error);
       });
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setEditedUser((prev) => ({ ...prev, [name]: value }));
+  // Function to toggle profile modal visibility
+  const toggleProfile = () => {
+    setProfileOpen(true);
   };
 
-  const handleUpdate = async () => {
-    try {
-      const userRef = doc(db, 'users', userId);
-      await updateDoc(userRef, editedUser);
-      setUserDetails(editedUser);
-      alert('Profile updated successfully!');
-      setShowProfile(false); // Close the popup after update
-    } catch (error) {
-      console.error('Error updating user profile:', error);
-    }
-  };
-
-  const handleDelete = async () => {
-    try {
-      const userRef = doc(db, 'users', userId);
-      await deleteDoc(userRef);
-      alert('User deleted successfully!');
-      setShowProfile(false);
-    } catch (error) {
-      console.error('Error deleting user:', error);
-    }
+  const handleProfileClose = () => {
+    setProfileOpen(false);
   };
 
   return (
@@ -102,7 +94,6 @@ const AccountMenu = ({ userId, userRole }) => {
         </Tooltip>
       </Box>
 
-      {/* MUI Account Menu */}
       <Menu
         anchorEl={anchorEl}
         id="account-menu"
@@ -138,25 +129,13 @@ const AccountMenu = ({ userId, userRole }) => {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <MenuItem onClick={() => setShowProfile(true)}>
-          <Avatar src={userDetails?.photoURL || ''} /> {userDetails?.name || 'Profile'}
+        <MenuItem onClick={toggleProfile}>
+          <Avatar src={userDetails?.photoURL || 'https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png'} />
+          {userDetails || 'Profile'}
         </MenuItem>
-        <MenuItem onClick={() => setShowProfile(true)}>
-          <Avatar /> My account
-        </MenuItem>
+
         <Divider />
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <PersonAdd fontSize="small" />
-          </ListItemIcon>
-          Add another account
-        </MenuItem>
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <Settings fontSize="small" />
-          </ListItemIcon>
-          Settings
-        </MenuItem>
+
         <MenuItem onClick={() => { handleLogout(); handleClose(); }}>
           <ListItemIcon>
             <Logout fontSize="small" />
@@ -165,50 +144,18 @@ const AccountMenu = ({ userId, userRole }) => {
         </MenuItem>
       </Menu>
 
-      {/* UserProfile Popup */}
-      {showProfile && (
-        <div className='PopupWrapper'>
-          <div className="UserPopUp">
-            <div className="userProfile">
-              <h2>User Profile</h2>
-              <img src={userDetails?.photoURL || ''} alt="User" />
-              <p>Name: {userDetails?.name || 'N/A'}</p>
-              <p>Surname: {userDetails?.surname || 'N/A'}</p>
-              <p>Age: {userDetails?.age || 'N/A'}</p>
-              <p>ID Number: {userDetails?.idNumber || 'N/A'}</p>
-              <p>Role: {userRole || 'N/A'}</p>
-
-              <h3>Edit Profile</h3>
-              <input
-                type="text"
-                name="name"
-                value={editedUser.name || ''}
-                onChange={handleInputChange}
-                placeholder="Name"
-              />
-              <input
-                type="text"
-                name="surname"
-                value={editedUser.surname || ''}
-                onChange={handleInputChange}
-                placeholder="Surname"
-              />
-              <input
-                type="number"
-                name="age"
-                value={editedUser.age || ''}
-                onChange={handleInputChange}
-                placeholder="Age"
-              />
-              <button onClick={handleUpdate}>Update</button>
-              <button onClick={handleDelete}>Delete User</button>
-              <button onClick={() => setShowProfile(false)}>Close</button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Profile Modal */}
+      <Dialog open={profileOpen} onClose={handleProfileClose} maxWidth="sm" fullWidth>
+      <DialogTitle>Your Profile</DialogTitle>
+      <DialogContent>
+        <UserProfile userId={userId} />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleProfileClose} color="secondary" variant="outlined">
+          Close
+        </Button>
+      </DialogActions>
+    </Dialog>
     </>
   );
-};
-
-export default AccountMenu;
+}

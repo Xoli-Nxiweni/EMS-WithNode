@@ -11,13 +11,18 @@
     padding: 20px 0;
 }
 .searchBar input{
+    background: #708195;
     padding: 10px;
     outline: none;
     border: none;
     border-radius: 15px;
+    color: #fff;
 }
 .searchBar svg{
     font-size: 25px;
+}
+::placeholder{
+    color:#ffffffa6
 }
 .searchBtn{
     background: #00000000;
@@ -49,7 +54,8 @@
     position: sticky;
     top: 140;
     margin: 0 5%;
-    background: #d9d9d9;
+    backdrop-filter: blur(50px);
+    background: rgba(255, 255, 255, 0.622);
     padding: 10px;
     border-radius: 5px;
     overflow-x: auto;
@@ -85,7 +91,7 @@
 table{
     width: 100%;
     border-collapse: collapse;
-    border: 1px solid #c0c0c0;
+    border: 1px solid #708195;
 }
 table img{
     width: 75px;
@@ -96,7 +102,7 @@ table img{
 th{
     position: sticky;
     top: 0;
-    background: #a7a7a7;
+    background: #708195;
     padding: 10px;
 }
 tr{

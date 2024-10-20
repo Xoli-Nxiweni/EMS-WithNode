@@ -1,7 +1,8 @@
+import { collection, addDoc, getDoc, doc, getDocs, updateDoc } from "firebase/firestore"; 
 import { useEffect, useState } from 'react';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
-import { collection, addDoc, getDocs } from 'firebase/firestore';
 import { db } from '../../firebase'; // Make sure Firebase is initialized properly
+import './Admins.css'; // Import custom styles
 
 const Admins = () => {
   const [admins, setAdmins] = useState([]);
@@ -11,16 +12,15 @@ const Admins = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
-  const [role, setRole] = useState('admin');
   const [addAdminError, setAddAdminError] = useState(null);
 
   // Fetch the list of admins from Firestore
   useEffect(() => {
     const fetchAdmins = async () => {
       setIsLoading(true);
-      setError(null); // Reset error before new request
+      setError(null);
       try {
-        const querySnapshot = await getDocs(collection(db, 'users'));
+        const querySnapshot = await getDocs(collection(db, 'admins'));
         const adminsList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         setAdmins(adminsList);
       } catch (err) {
@@ -44,78 +44,132 @@ const Admins = () => {
       const user = userCredential.user;
 
       // Store admin details in Firestore
-      await addDoc(collection(db, 'users'), {
+      await addDoc(collection(db, 'admins'), {
         uid: user.uid,
         email,
+        password,
         name,
-        role, // 'admin' or 'sysadmin'
+        admin: true,
       });
 
       // Update the list of admins
       setAdmins((prevAdmins) => [
         ...prevAdmins,
-        { id: user.uid, email, name, role },
+        { id: user.uid, password, email, name, admin: true },
       ]);
 
       alert('Admin added successfully!');
-      // Reset form fields
-      setEmail('');
-      setPassword('');
-      setName('');
-      setRole('admin');
-      setAddAdminError(null);
-
+      resetFormFields();
     } catch (err) {
       setAddAdminError('Failed to add admin: ' + err.message);
     }
   };
 
+  // Handle promoting an admin
+  const handlePromote = async (adminId) => {
+    try {
+      const adminRef = doc(db, 'admins', adminId);
+      await updateDoc(adminRef, { admin: true }); // Assuming 'admin' field represents admin rights
+      setAdmins((prevAdmins) => 
+        prevAdmins.map((admin) => 
+          admin.id === adminId ? { ...admin, admin: true } : admin
+        )
+      );
+      alert('Admin promoted successfully!');
+    } catch (err) {
+      console.error('Error promoting admin:', err);
+    }
+  };
+
+  // Handle demoting an admin
+  const handleDemote = async (adminId) => {
+    try {
+      const adminRef = doc(db, 'admins', adminId);
+      await updateDoc(adminRef, { admin: false }); // Assuming 'admin' field represents admin rights
+      setAdmins((prevAdmins) => 
+        prevAdmins.map((admin) => 
+          admin.id === adminId ? { ...admin, admin: false } : admin
+        )
+      );
+      alert('Admin demoted successfully!');
+    } catch (err) {
+      console.error('Error demoting admin:', err);
+    }
+  };
+
+  // Helper function to reset form fields
+  const resetFormFields = () => {
+    setEmail('');
+    setPassword('');
+    setName('');
+    setAddAdminError(null);
+  };
+
   return (
-    <div>
+    <div className="admins-container">
       <h1>Admins List</h1>
       {isLoading ? (
         <p>Loading...</p>
       ) : error ? (
-        <p>Error: {error}</p>
+        <p className="error-message">Error: {error}</p>
       ) : admins.length === 0 ? (
         <p>No admins available</p>
       ) : (
-        <ul>
-          {admins.map((admin) => (
-            <li key={admin.id}>
-              {admin.name} ({admin.role})
-            </li>
-          ))}
-        </ul>
+        <table className="admins-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Password</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {admins.map((admin) => (
+              <tr key={admin.id}>
+                <td>{admin.name || 'Super Admin'}</td>
+                <td>{admin.email}</td>
+                <td>{admin.password}</td>
+                <td>
+                  {admin.name &&(
+                    <>
+                      <button onClick={() => handlePromote(admin.id)} className="action-button">Promote</button>
+                      <button onClick={() => handleDemote(admin.id)} className="action-button">Demote</button>
+                    </>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       )}
 
       <h2>Add Admin</h2>
-      <form onSubmit={handleAddAdmin}>
+      <form onSubmit={handleAddAdmin} className="add-admin-form">
         <input
           type="email"
           placeholder="Admin Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          required
         />
         <input
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          required
         />
         <input
           type="text"
           placeholder="Admin Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
+          required
         />
-        <select value={role} onChange={(e) => setRole(e.target.value)}>
-          <option value="admin">Admin</option>
-          <option value="sysadmin">System Admin</option>
-        </select>
         <button type="submit">Add Admin</button>
       </form>
-      {addAdminError && <p style={{ color: 'red' }}>{addAdminError}</p>}
+      {addAdminError && <p className="error-message">{addAdminError}</p>}
     </div>
   );
 };

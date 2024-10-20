@@ -8,36 +8,47 @@ import AddUser from './Components/Adding Component/AddEmployee';
 import ViewDeletedUsers from './Components/Deleted Users Component/DeletedEmployee';
 import Loader from './Components/Loader/Loader';
 import Admins from './Components/AdminsComponent/Admins';
+import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { auth } from './firebase'; // import Firebase auth
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showSignUp, setShowSignUp] = useState(false);
   const [activeComponent, setActiveComponent] = useState('viewEmployees');
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
+  // Listen for authentication state changes
   useEffect(() => {
-    // Check if the user is already signed in
-    const isSignedIn = localStorage.getItem('isSignedIn');
-    setIsLoggedIn(isSignedIn === 'true');
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setIsLoggedIn(!!user); // Set isLoggedIn based on user presence
+      setIsLoading(false); // Stop loading once the auth state is determined
+    });
+
+    return () => unsubscribe(); // Cleanup subscription on unmount
   }, []);
 
-  const handleSignIn = () => {
+  const handleLogin = async (email, password) => {
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoggedIn(true);
-      localStorage.setItem('isSignedIn', 'true'); // Persist sign-in status
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      console.log('User logged in:', userCredential.user);
+    } catch (error) {
+      console.error('Login error:', error.message);
+    } finally {
       setIsLoading(false);
-    }, 2000); // Simulate an API call delay
+    }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoggedIn(false);
-      setActiveComponent('viewEmployees');
-      localStorage.setItem('isSignedIn', 'false'); // Clear sign-in status
+    try {
+    signOut(auth); // Sign out using Firebase auth
+      setActiveComponent('viewEmployees'); // Reset to default component
+    } catch (error) {
+      console.error('Logout error:', error.message);
+    } finally {
       setIsLoading(false);
-    }, 1000); // Simulate an API call delay
+    }
   };
 
   const handleNavClick = (component) => {
@@ -60,7 +71,7 @@ const App = () => {
         return <ViewUser onAddUserClick={() => setActiveComponent('addEmployee')} />;
       case 'viewDeletedEmployees':
         return <ViewDeletedUsers />;
-      case 'admin':
+      case 'viewAdmins':
         return <Admins />;
       default:
         return <ViewUser onAddUserClick={() => setActiveComponent('addEmployee')} />;
@@ -83,7 +94,7 @@ const App = () => {
           showSignUp ? (
             <SignUp onSignInClick={handleSignInClick} />
           ) : (
-            <SignIn onSignIn={handleSignIn} onRegisterClick={handleRegisterClick} />
+            <SignIn onSignIn={handleLogin} onRegisterClick={handleRegisterClick} />
           )
         ) : (
           <div>

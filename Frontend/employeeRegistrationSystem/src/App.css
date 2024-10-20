@@ -6,7 +6,12 @@
   font-family: "Mulish", sans-serif;
 }
 body{
-  background: #a3a3a3;
+  /* background: url('https://wallpaper.dog/large/20407857.jpg'); */
+  background-position:center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 100vh;
+  background-attachment: fixed;
 }
 ::-webkit-scrollbar{
   width: 5px;
