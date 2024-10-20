@@ -41,9 +41,9 @@ const Landing = ({ onLogout, showLogout, onNavClick, activeLink }) => {
   // console.log('admin data', adminData)
   // console.log('role', role)
 
-  if (!user) {
-    return <p>Please log in to continue.</p>; // Handle unauthenticated state
-  }
+  // if (!user) {
+  //   return <p>Please log in to continue.</p>; // Handle unauthenticated state
+  // }
 
   return (
     <div className='NavBar'>
