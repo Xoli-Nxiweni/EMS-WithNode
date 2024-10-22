@@ -1,76 +1,205 @@
-.admins-container {
-    /* width: 800px; */
-    margin: 0 auto;
-    padding: 150px 10%;
-    height: 100vh;
+.flex {
+    padding: 85px 0;
+}
+
+.functions {
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 5%;
+}
+
+.searchBar {
+    padding: 20px 0;
+}
+
+.searchBar input {
+    background: #ffffff;
+    padding: 10px;
+    outline: none;
+    border: none;
+    border-radius: 15px;
+    color: #fff;
+}
+
+.searchBar svg {
+    font-size: 25px;
+}
+
+/* ::placeholder {
+    color: #ffffffa6;
+} */
+
+.searchBtn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.searchBtn:hover {
+    background: transparent;
+}
+
+.addBtn {
+    background: #395d2c;
+    width: 100px;
+    height: 50px;
+    border: none;
+    border-radius: 15px;
+    transition: all 0.2s linear;
+    cursor: pointer;
+}
+
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #ffffff3b;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(25px);
-  }
-  
-  .admins-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-  }
-  
-  .admins-table th,
-  .admins-table td {
-    padding: 10px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-  }
-  
-  .admins-table th {
-    background-color: #007bff;
-    color: white;
-  }
-  
-  .action-button {
-    background-color: #007bff;
-    color: white;
+    z-index: 1000;
+}
+
+.addAdminPopUp {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    width: 400px;
+    position: relative;
+}
+
+.closeBtn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
     border: none;
-    border-radius: 4px;
-    padding: 5px 10px;
+    font-size: 20px;
     cursor: pointer;
-    margin-left: 5px;
-  }
-  
-  .action-button:hover {
-    background-color: #0056b3;
-  }
-  
-  .add-admin-form {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .add-admin-form input {
-    margin-bottom: 10px;
+}
+
+.add-admin-form input {
+    width: 100%;
+    margin-bottom: 15px;
     padding: 10px;
     border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  .add-admin-form button {
+    border-radius: 5px;
+}
+
+.add-admin-form button {
+    width: 100%;
     padding: 10px;
     background-color: #28a745;
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 5px;
     cursor: pointer;
-  }
-  
-  .add-admin-form button:hover {
+    transition: background 0.2s;
+}
+
+.add-admin-form button:hover {
     background-color: #218838;
-  }
-  
-  .error-message {
+}
+
+.error-message {
     color: red;
-  }
-  
+    margin-top: 10px;
+    text-align: center;
+}
+
+
+.addBtn:hover {
+    background: #47912c;
+}
+
+.table {
+    margin: 0 5%;
+    backdrop-filter: blur(50px);
+    background: rgba(255, 255, 255, 0.622);
+    padding: 10px;
+    border-radius: 5px;
+    overflow-x: auto;
+    max-height: 500px;
+}
+
+.table h1 {
+    font-size: 2.5em;
+}
+
+.editBtn {
+    padding: 7px;
+    margin: 5px;
+    background: #47912c;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+}
+
+.deleteBtn {
+    padding: 7px;
+    margin: 5px;
+    background: red;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #708195;
+}
+
+th {
+    position: sticky;
+    top: 0;
+    background: #708195;
+    padding: 10px;
+}
+
+tr {
+    text-align: center;
+    border-bottom: 1px solid #e6e6e6;
+    padding: 10px;
+    transition: all 0.1s linear;
+}
+
+tr:hover {
+    background: #f5f5f5;
+}
+
+td {
+    border-right: 1px solid #c0c0c0;
+    border-left: 1px solid #c0c0c0;
+}
+
+@media (max-width: 772px) {
+    .table {
+        max-height: 400px;
+    }
+
+    .table h1 {
+        font-size: 1.25em;
+    }
+}
+
+@media (max-width: 395px) {
+    .functions {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    th {
+        padding: 5px 25px;
+    }
+
+    tr {
+        font-size: 0.6em;
+    }
+}

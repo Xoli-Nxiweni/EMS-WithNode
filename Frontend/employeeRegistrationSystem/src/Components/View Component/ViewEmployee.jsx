@@ -5,7 +5,7 @@ import EditUser from './EditEmployee';
 import UserModal from './EmployeeModal';
 import PopupAlert from '../Alerts/PopUpAlert';
 import Loader from '../Loader/Loader';
-import { auth } from '../../firebase'; // Adjust import path based on your project structure
+import { auth } from '../../firebase';
 import './ViewEmployee.css';
 
 // eslint-disable-next-line react/prop-types

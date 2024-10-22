@@ -1,78 +1,67 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
 import { getAuth, signOut } from 'firebase/auth';
-import Box from '@mui/material/Box';
-import Avatar from '@mui/material/Avatar';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
-import PersonAdd from '@mui/icons-material/PersonAdd';
-import Logout from '@mui/icons-material/Logout';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import Button from '@mui/material/Button';
-import UserProfile from '../UserProfile/UserProfile';
 import { firestore } from '../../firebase';
+import {
+  Avatar,
+  Box,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  Divider,
+  IconButton,
+  Tooltip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Button,
+} from '@mui/material';
+import Logout from '@mui/icons-material/Logout';
+import UserProfile from '../UserProfile/UserProfile';
 
 // eslint-disable-next-line react/prop-types
 export default function AccountMenu({ userId, onLogout }) {
   const [userDetails, setUserDetails] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const [profileOpen, setProfileOpen] = useState(false);
-  const [isAdminsClicked, setIsAdminsClicked] = useState(false);
+  const auth = getAuth(); // Firebase Auth instance
+
   const open = Boolean(anchorEl);
 
-  const auth = getAuth();
+  // Fetch user details from Firestore only when the userId changes
+  const fetchUserDetails = useCallback(async () => {
+    if (!userId) return;
 
-  // Fetch user details from Firestore
-  useEffect(() => {
-    const fetchUserDetails = async () => {
-      if (userId) {
-        const userRef = doc(firestore, 'users', userId);
-        const userSnap = await getDoc(userRef);
-        if (userSnap.exists()) {
-          setUserDetails(userSnap.data());
-        }
+    try {
+      const userRef = doc(firestore, 'admins', userId);
+      const userSnap = await getDoc(userRef);
+
+      if (userSnap.exists()) {
+        setUserDetails(userSnap.data());
+      } else {
+        console.error('User not found in admins collection');
       }
-    };
-
-    fetchUserDetails();
+    } catch (error) {
+      console.error('Error fetching user details:', error);
+    }
   }, [userId]);
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+  useEffect(() => {
+    fetchUserDetails();
+  }, [fetchUserDetails]);
 
-  const handleClose = () => {
-    setAnchorEl(null);
-    setIsAdminsClicked(false); // Close Admins when menu is closed
-  };
-
-  const handleLogout = () => {
-    signOut(auth)
-      .then(() => {
-        console.log('User signed out');
-        if (onLogout) {
-          onLogout(); // Trigger any additional logout actions if provided
-        }
-      })
-      .catch((error) => {
-        console.error('Error logging out:', error);
-      });
-  };
-
-  // Function to toggle profile modal visibility
-  const toggleProfile = () => {
-    setProfileOpen(true);
-  };
-
-  const handleProfileClose = () => {
-    setProfileOpen(false);
+  const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
+  const handleMenuClose = () => setAnchorEl(null);
+  const toggleProfile = () => setProfileOpen((prev) => !prev);
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      console.log('User signed out');
+      onLogout?.(); // Call onLogout if provided
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
   };
 
   return (
@@ -80,14 +69,17 @@ export default function AccountMenu({ userId, onLogout }) {
       <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
         <Tooltip title="Account settings">
           <IconButton
-            onClick={handleClick}
+            onClick={handleMenuOpen}
             size="small"
             sx={{ ml: 2 }}
             aria-controls={open ? 'account-menu' : undefined}
             aria-haspopup="true"
-            aria-expanded={open ? 'true' : undefined}
+            aria-expanded={open || undefined}
           >
-            <Avatar sx={{ width: 32, height: 32 }} src={userDetails?.photoURL || ''}>
+            <Avatar
+              sx={{ width: 32, height: 32 }}
+              src={userDetails?.photoURL || ''}
+            >
               {userDetails?.name?.charAt(0)}
             </Avatar>
           </IconButton>
@@ -98,14 +90,13 @@ export default function AccountMenu({ userId, onLogout }) {
         anchorEl={anchorEl}
         id="account-menu"
         open={open}
-        onClose={handleClose}
-        onClick={handleClose}
+        onClose={handleMenuClose}
         PaperProps={{
           elevation: 0,
           sx: {
+            mt: 1.5,
             overflow: 'visible',
             filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-            mt: 1.5,
             '& .MuiAvatar-root': {
               width: 32,
               height: 32,
@@ -114,7 +105,6 @@ export default function AccountMenu({ userId, onLogout }) {
             },
             '&::before': {
               content: '""',
-              display: 'block',
               position: 'absolute',
               top: 0,
               right: 14,
@@ -130,13 +120,16 @@ export default function AccountMenu({ userId, onLogout }) {
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
         <MenuItem onClick={toggleProfile}>
-          <Avatar src={userDetails?.photoURL || 'https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png'} />
-          {userDetails || 'Profile'}
+          <Avatar
+            src={
+              userDetails?.photoURL ||
+              'https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png'
+            }
+          />
+          {userDetails?.name || 'Profile'}
         </MenuItem>
-
         <Divider />
-
-        <MenuItem onClick={() => { handleLogout(); handleClose(); }}>
+        <MenuItem onClick={() => { handleLogout(); handleMenuClose(); }}>
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>
@@ -144,18 +137,17 @@ export default function AccountMenu({ userId, onLogout }) {
         </MenuItem>
       </Menu>
 
-      {/* Profile Modal */}
-      <Dialog open={profileOpen} onClose={handleProfileClose} maxWidth="sm" fullWidth>
-      <DialogTitle>Your Profile</DialogTitle>
-      <DialogContent>
-        <UserProfile userId={userId} />
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleProfileClose} color="secondary" variant="outlined">
-          Close
-        </Button>
-      </DialogActions>
-    </Dialog>
+      <Dialog open={profileOpen} onClose={toggleProfile} maxWidth="sm" fullWidth>
+        <DialogTitle>Your Profile</DialogTitle>
+        <DialogContent>
+          <UserProfile userId={userId} />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={toggleProfile} color="secondary" variant="outlined">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }

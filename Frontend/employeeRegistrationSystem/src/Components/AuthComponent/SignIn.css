@@ -21,8 +21,11 @@
     flex-direction: column;
     gap: 10px;
 }
+::placeholder{
+    color: grey;
+}
 .signInForm input{
-    background: #afafaf;
+    background: #ffffff;
     padding: 10px;
     width: 320px;
     border-radius: 5px;
@@ -34,8 +37,8 @@
     border-bottom: 2px solid blue;
 }
 .signIn button{
-    background: #626262;
-    border: 2px solid #626262;
+    background: #505f70;
+    border: 2px solid #505f70;
     transition: all .2s linear;
     color: #fff;
     height: 40px;
@@ -46,8 +49,8 @@
 }
 .signIn button:hover{
     background: transparent;
-    border: 2px solid #626262;
-    color: #626262;
+    border: 2px solid #ffffff;
+    color: #ffffff;
 }
 span{
     color: purple;

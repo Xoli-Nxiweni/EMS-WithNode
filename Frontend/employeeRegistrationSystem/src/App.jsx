@@ -72,7 +72,7 @@ const App = () => {
       case 'viewDeletedEmployees':
         return <ViewDeletedUsers />;
       case 'viewAdmins':
-        return <Admins />;
+        return <Admins onViewAdmins={() => setActiveComponent('viewAdmins')} />;
       default:
         return <ViewUser onAddUserClick={() => setActiveComponent('addEmployee')} />;
     }
