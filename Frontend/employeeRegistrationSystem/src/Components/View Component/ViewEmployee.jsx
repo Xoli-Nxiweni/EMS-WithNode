@@ -103,43 +103,50 @@ const ViewUser = ({ onAddUserClick }) => {
         }
     };
 
-    // Handle user deletion
-    const handleDelete = async (user) => {
-        let token = '';
+// Handle user deletion
+const handleDelete = async (user) => {
+    let token = '';
+    setIsLoading(true);
 
-        try {
-            const currentUser = auth.currentUser;
-            if (currentUser) {
-                token = await currentUser.getIdToken();
-            } else {
-                throw new Error('User not authenticated. Please log in.');
-            }
-
-            const response = await fetch(`http://localhost:8080/employees/${user.idNumber}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-            });
-
-            if (!response.ok) {
-                throw new Error('Error deleting employee');
-            }
-
-            const updatedData = userData.filter((item) => item.idNumber !== user.idNumber);
-            setUserData(updatedData);
-            setFilteredData(updatedData);
-
-            setShowPopup(true);
-            setTimeout(() => {
-                setShowPopup(false);
-            }, 3000);
-        } catch (error) {
-            console.error('Error deleting employee:', error);
-            setError(error);
+    try {
+        const currentUser = auth.currentUser;
+        if (currentUser) {
+            token = await currentUser.getIdToken(true)
+            console.log('Token:', token); // Log token for debugging
+        } else {
+            throw new Error('User not authenticated. Please log in.');
         }
-    };
+
+        const response = await fetch(`http://localhost:8080/employees/${user.idNumber}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            const errorResponse = await response.json();
+            throw new Error(`Error deleting employee: ${errorResponse.message || 'Unknown error'}`);
+        }
+
+        const updatedData = userData.filter((item) => item.idNumber !== user.idNumber);
+        setUserData(updatedData);
+        setFilteredData(updatedData);
+
+        setShowPopup(true);
+        setTimeout(() => {
+            setShowPopup(false);
+        }, 3000);
+    } catch (error) {
+        console.error('Error deleting employee:', error);
+        setError(error);
+    } finally {
+        setIsLoading(false);
+    }
+};
+
+
 
     // Handle editing a user
     const handleEdit = (user) => {
