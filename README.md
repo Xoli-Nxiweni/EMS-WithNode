@@ -71,7 +71,7 @@ Make sure you have the following installed on your machine:
 
 <!-- --- -->
 
-##Credentials
+## Credentials
 - username: admin@admin.com
 - password: admin123 
 
